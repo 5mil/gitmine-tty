@@ -15,7 +15,8 @@ operator:
   github_owner: "5mil"
   github_repo: "gitmine-tty"
   pages_base: "https://5mil.github.io/gitmine-tty"
-  fennec_port: 8765  # Fennec WebSocket bridge port
+  relay_host: "0.0.0.0"
+  relay_port: 8765
 
 template:
   ttl: 30              # seconds before template expires

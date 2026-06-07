@@ -32,8 +32,8 @@ jobs:
       TRINITY_RPC_USER: ttypool
       TRINITY_RPC_PASS: ${{ secrets.TRINITY_RPC_PASS }}
       POOL_ADDRESS: ${{ secrets.POOL_ADDRESS }}
-      FENNEC_SECRET: ${{ secrets.FENNEC_SECRET }}
-      FENNEC_URL: ${{ secrets.FENNEC_URL }}
+      RELAY_SECRET: ${{ secrets.RELAY_SECRET }}
+      RELAY_URL: ${{ secrets.RELAY_URL }}
 
     steps:
       - name: Checkout repo (full history for share branch inspection)
@@ -79,7 +79,6 @@ jobs:
             -rpcuser=${{ env.TRINITY_RPC_USER }} \
             -rpcpassword=${{ env.TRINITY_RPC_PASS }} \
             -daemon
-          # Wait for RPC to be ready (up to 60s)
           for i in $(seq 1 12); do
             sleep 5
             ~/.trinityd/trinityd-cli -rpcport=${{ env.TRINITY_RPC_PORT }} \
@@ -120,13 +119,13 @@ jobs:
           git tag "$TAG" 2>/dev/null || true
           git push origin "$TAG" 2>/dev/null || true
 
-      - name: Notify Fennec bridge (self-hosted real-time)
-        if: env.FENNEC_URL != ''
+      - name: Notify Relay bridge (self-hosted real-time)
+        if: env.RELAY_URL != ''
         run: |
           HEIGHT=$(python -c "import json; print(json.load(open('docs/template.json'))['height'])")
           ALGO=$(python -c "import json; print(json.load(open('docs/template.json'))['algo'])")
-          curl -s -X POST "${{ env.FENNEC_URL }}/broadcast" \
-            -H "Authorization: Bearer ${{ env.FENNEC_SECRET }}" \
+          curl -s -X POST "${{ env.RELAY_URL }}/broadcast" \
+            -H "Authorization: Bearer ${{ env.RELAY_SECRET }}" \
             -H "Content-Type: application/json" \
             -d "{\"type\":\"state_update\",\"algo\":\"${ALGO}\",\"height\":${HEIGHT}}" || true
 
