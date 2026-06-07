@@ -1,0 +1,13 @@
+{
+  "_note": "This file is updated by GitHub Actions",
+  "pool": { "name": "GitMine TTY", "ticker": "TTY" },
+  "miners": {},
+  "algos": {
+    "sha256d":     { "shares": 0 },
+    "scrypt":      { "shares": 0 },
+    "myr-groestl": { "shares": 0 }
+  },
+  "total_shares": 0,
+  "blocks": [],
+  "updated_at": 0
+}

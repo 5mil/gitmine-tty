@@ -1,0 +1,9 @@
+{
+  "pool_name": "GitMine TTY",
+  "ticker": "TTY",
+  "fee_percent": 1.0,
+  "algorithms": ["sha256d", "scrypt", "myr-groestl"],
+  "payout_threshold": 100,
+  "method": "pplns",
+  "github_repo": "https://github.com/5mil/gitmine-tty"
+}
