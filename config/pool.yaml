@@ -2,14 +2,14 @@
 pool:
   name: "GitMine TTY"
   ticker: "TTY"
-  address: "REPLACE_WITH_YOUR_TTY_ADDRESS"
+  address: "${POOL_ADDRESS}"   # Set via GitHub Secret POOL_ADDRESS
   fee_percent: 1.0
   network: "mainnet"  # mainnet | testnet
   rpc:
     host: "127.0.0.1"
     port: 12345
     user: "ttypool"
-    password: "REPLACE_WITH_RPC_PASSWORD"
+    password: "${TRINITY_RPC_PASS}"   # Set via GitHub Secret TRINITY_RPC_PASS
 
 operator:
   github_owner: "5mil"

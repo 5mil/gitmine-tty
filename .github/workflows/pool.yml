@@ -50,13 +50,13 @@ jobs:
 
       - name: Install pool operator dependencies
         run: |
-          pip install \  
-            pyyaml \          # Config parsing
-            requests \        # RPC calls
-            python-bitcoinrpc \  # Trinity RPC client
-            py-scrypt \       # Scrypt validation
-            pygroestl \       # Myr-Groestl validation
-            pynacl            # Ed25519 signature verification
+          pip install \
+            pyyaml \
+            requests \
+            python-bitcoinrpc \
+            py-scrypt \
+            pygroestl \
+            pynacl
 
       - name: Cache Trinity daemon binary
         uses: actions/cache@v4
@@ -67,13 +67,7 @@ jobs:
 
       - name: Build Trinity daemon (if not cached)
         if: steps.trinityd-cache.outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get install -y build-essential libssl-dev libboost-all-dev libdb++-dev
-          # Build from source (pinned commit)
-          git clone --depth 1 https://github.com/REPLACE_WITH_TRINITY_REPO trinityd-src
-          cd trinityd-src && ./autogen.sh && ./configure --with-incompatible-bdb --without-gui
-          make -j$(nproc)
-          mkdir -p ~/.trinityd && cp src/trinityd ~/.trinityd/
+        run: bash scripts/build-trinityd.sh
 
       - name: Start Trinity daemon (pruned, 550 blocks)
         run: |
@@ -123,7 +117,6 @@ jobs:
           HEIGHT=$(python -c "import json; print(json.load(open('docs/template.json'))['height'])")
           ALGO=$(python -c "import json; print(json.load(open('docs/template.json'))['algo'])")
           TAG="template-${ALGO}-${HEIGHT}"
-          # Only tag if it doesn't exist
           git tag "$TAG" 2>/dev/null || true
           git push origin "$TAG" 2>/dev/null || true
 
@@ -136,10 +129,9 @@ jobs:
             -H "Authorization: Bearer ${{ env.FENNEC_SECRET }}" \
             -H "Content-Type: application/json" \
             -d "{\"type\":\"state_update\",\"algo\":\"${ALGO}\",\"height\":${HEIGHT}}" || true
-          # Non-fatal: pool still operates if Fennec is offline
 
       - name: Deploy dashboard to GitHub Pages
         uses: actions/deploy-pages@v4
         with:
           path: docs
-        continue-on-error: true  # Non-fatal if Pages not enabled yet
+        continue-on-error: true

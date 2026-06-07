@@ -14,9 +14,9 @@ payouts:
     signers: []
 
   rpc_broadcast:
-    # Use public Trinity RPC nodes (no local wallet needed)
+    # Trinity public RPC nodes — sourced from 5mil/Trinity network
     endpoints:
-      - "http://node1.trinity-rpc.example.com"
-      - "http://node2.trinity-rpc.example.com"
+      - "http://explorer.trinitycoin.org:12345"
+      - "http://node.trinitycoin.org:12345"
     fallback_enabled: true
     timeout_seconds: 30
