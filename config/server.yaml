@@ -1,0 +1,5 @@
+listen_addr: "0.0.0.0:3333"
+# Optional here; recommended to set via env:
+#   DATABASE_URL=postgres://user:pass@host:5432/postgres
+# or GITMINE_POOL__DATABASE_URL
+database_url: ""
