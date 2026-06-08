@@ -17,28 +17,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ── Rust toolchain + cache ─────────────────────────────────────────────
+      # ── Rust toolchain + cache ────────────────────────────────────────────
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: x86_64-unknown-linux-musl
+          targets: aarch64-unknown-linux-musl
 
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: pool-server
 
-      - name: Install musl tools
-        run: sudo apt-get install -y musl-tools
+      - name: Install ARM musl cross-compiler
+        run: |
+          sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu
+          mkdir -p pool-server/.cargo
+          cat >> pool-server/.cargo/config.toml <<'EOF'
+          [target.aarch64-unknown-linux-musl]
+          linker = "aarch64-linux-gnu-gcc"
+          EOF
 
-      # ── Build static binary ────────────────────────────────────────────────
-      - name: Build release binary (musl static)
+      # ── Build static ARM binary ───────────────────────────────────────────
+      - name: Build release binary (aarch64 musl static)
         working-directory: pool-server
         run: |
-          cargo build --release --target x86_64-unknown-linux-musl
-          ls -lh target/x86_64-unknown-linux-musl/release/gitmine-pool
+          cargo build --release --target aarch64-unknown-linux-musl
+          ls -lh target/aarch64-unknown-linux-musl/release/gitmine-pool
+          file target/aarch64-unknown-linux-musl/release/gitmine-pool
 
-      # ── Deploy over SSH ────────────────────────────────────────────────────
+      # ── Deploy over SSH ───────────────────────────────────────────────────
       - name: Deploy to VPS
         env:
           DEPLOY_KEY:  ${{ secrets.DEPLOY_KEY }}
@@ -51,7 +58,7 @@ jobs:
           # Upload binary
           scp -i /tmp/deploy_key \
               -o StrictHostKeyChecking=no \
-              pool-server/target/x86_64-unknown-linux-musl/release/gitmine-pool \
+              pool-server/target/aarch64-unknown-linux-musl/release/gitmine-pool \
               ${DEPLOY_USER}@${DEPLOY_HOST}:/opt/gitmine/gitmine-pool.new
 
           # Upload config
